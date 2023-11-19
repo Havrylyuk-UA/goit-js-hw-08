@@ -66,18 +66,45 @@ const images = [
 
 const galleryBox = document.querySelector('.gallery');
 
-// `<li class="gallery-item">
-//         <a class="gallery-link" href="${original}">
-//           <img
-//             class="gallery-image"
-//             src="${preview}"
-//             data-source="${original}"
-//             alt="${description}"
-//           />
-//         </a>
-//       </li>`
+function getImgFromArr(imgList) {
+  return imgList
+    .flatMap(
+      ({ preview, original, description }) => `<li class="gallery-item">
+           <a class="gallery-link" href="${original}">
+             <img
+               class="gallery-image"
+               src="${preview}"
+               data-source="${original}"
+               alt="${description}"
+             />
+           </a>
+         </li>`
+    )
+    .join('');
+}
 
+galleryBox.addEventListener('click', showImg);
 
+function showImg(e) {
+  e.preventDefault();
 
+  if (e.target.nodeName !== 'IMG') {
+    return;
+  }
 
-galleryBox.insertAdjacentHTML("afterbegin", instance);
+  const instance = basicLightbox.create(
+    `
+  <img width="1112" height="640" src="${e.target.dataset.source}">
+`
+  );
+
+  instance.show();
+
+  galleryBox.addEventListener('keydown', e => {
+    if (e.code === 'Escape') {
+      instance.close();
+    }
+  });
+}
+
+galleryBox.insertAdjacentHTML('afterbegin', getImgFromArr(images));
