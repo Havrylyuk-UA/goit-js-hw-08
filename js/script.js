@@ -85,6 +85,7 @@ function getImgFromArr(imgList) {
 
 galleryBox.addEventListener('click', showImg);
 
+
 function showImg(e) {
   e.preventDefault();
 
@@ -95,16 +96,24 @@ function showImg(e) {
   const instance = basicLightbox.create(
     `
   <img width="1112" height="640" src="${e.target.dataset.source}">
-`
+`,
+    {
+      onShow: () => {
+        galleryBox.addEventListener('keydown', closeImg);
+      },
+      onClose: () => {
+        galleryBox.removeEventListener('keydown', closeImg);
+      },
+    }
   );
 
   instance.show();
 
-  galleryBox.addEventListener('keydown', e => {
+  function closeImg(e) {
     if (e.code === 'Escape') {
       instance.close();
     }
-  });
+  }
 }
 
 galleryBox.insertAdjacentHTML('afterbegin', getImgFromArr(images));
